@@ -1,0 +1,54 @@
+version: '3.8'
+services:
+  # 1. The Database (Postgres + PostGIS)
+  postgres:
+    image: postgis/postgis:16-3.4-alpine
+    container_name: vibecity-db
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: vibecity
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: always
+
+  # 2. The Cache (Redis)
+  redis:
+    image: redis:alpine
+    container_name: vibecity-redis
+    ports:
+      - "6379:6379"
+    # Snapshot saves every 60 seconds if 1 key changed (good for dev)
+    command: redis-server --save 60 1 --loglevel warning 
+    volumes:
+      - redis_data:/data
+    restart: always
+  # 3. Web-based GUI for Postgres
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: vibecity-pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: root
+    ports:
+      - "5050:80"
+    restart: always
+
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    container_name: vibecity-redis-gui
+    environment:
+      - REDIS_HOSTS=local:redis:6379 
+      # "local" is just a label name
+      # "redis" is the service name defined above at line 16
+    ports:
+      - "8081:8081"
+    depends_on:
+      - redis
+    restart: always
+
+volumes:
+  postgres_data:
+  redis_data:
