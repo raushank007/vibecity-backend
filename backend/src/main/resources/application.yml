@@ -1,0 +1,30 @@
+spring:
+  application:
+    name: vibecity-backend
+
+  # Database Configuration (VC-001)
+  datasource:
+    url: jdbc:postgresql://localhost:5432/vibecity
+    username: admin
+    password: password
+    driver-class-name: org.postgresql.Driver
+
+  # JPA / Hibernate Settings
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: update # Automatically creates tables (Good for Dev, Bad for Prod)
+    properties:
+      hibernate:
+        format_sql: true # Logs pretty SQL queries so you can see what's happening
+
+  # Redis Configuration (VC-001)
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
+  # Virtual Threads (Performance Optimization)
+  threads:
+    virtual:
+      enabled: true
